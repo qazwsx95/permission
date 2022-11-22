@@ -21,16 +21,21 @@ public class LoginController {
     public HttpResult login(@Validated AccountVO account){
         Account login = accountService.login(account.getUsername(), account.getPassword());
         //        没有session    2.02.39
-        StpUtil.login(login.getId());
-        //得到token
-        String tokenValue = StpUtil.getTokenValue();
-        List<String> permissions =StpUtil.getPermissionList();
-        List<String> roles =StpUtil.getRoleList();
-        return HttpResult.ok()
-                .put("token", tokenValue)
-                .put("permissions", permissions)
-                .put("roles", roles);
+        if (login   != null){
 
+            StpUtil.login(login.getId());
+            //得到token
+            String tokenValue = StpUtil.getTokenValue();
+            List<String> permissions =StpUtil.getPermissionList();
+            List<String> roles =StpUtil.getRoleList();
+            return HttpResult.ok()
+                    .put("token", tokenValue)
+                    .put("permissions", permissions)
+                    .put("roles", roles);
+
+        }else {
+            return HttpResult.error(400,"用户名或密码错误");
+        }
 
     }
 

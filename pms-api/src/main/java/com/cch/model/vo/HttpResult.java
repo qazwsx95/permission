@@ -43,6 +43,6 @@ public class HttpResult {
         return new HttpResult().setCode(200).setMsg(msg).setData(data);
     }
     public static HttpResult error(int code,String msg){
-        return new HttpResult().setCode(200).setMsg(msg);
+        return new HttpResult().setCode(code).setMsg(msg);
     }
 }
