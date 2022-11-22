@@ -25,9 +25,7 @@ export default defineStore('login',{
         //获取用户登录状态
         isLogin(){
             //两次取反，转换成boolean类型
-            let a =!!this.token
-            console.log("!!!!this.token:"+a);
-            return ()=>a
+            return ()=>!!this.token
         }
     },
     persist:{

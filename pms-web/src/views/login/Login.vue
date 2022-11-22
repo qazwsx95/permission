@@ -57,35 +57,69 @@ const form = $ref(null)
 const router = useRouter()
 //调用useStore 函数得到存储库
 const loginStore = useStore()
+
+
+
 function login(){
   form.validate((isValid,errors)=>{
     if(isValid){
-      //todo 发送登录请求
+      //表单校验通过
       loginApi.login(userInfo).then(res=>{
-        //登录成功
         ElMessage.success('登录成功')
         console.log(res.data);
         loginStore.setLoginStatus(res.data)
-      //  跳转到Home
         router.push({name:'Home'})
+        console.log(import.meta.env.VITE_MOCK_ENABLE==='true');
+
       }).catch(data=>{
-        //  否则  登录不成功   data是Promise.reject(data)
-        let msg = data
-        if (data.msg){
-          msg= data.msg
-          console.log(data);
+        console.log(data)
+        let msg = data;
+        if(data.msg){
+          msg = data.msg
         }
         ElMessage.error({
-          message:msg,
-          group:true
+          message: msg,
+          group: true
         })
       })
     }
-    // else{
-    //   // console.log(errors)  errors=>验证规则报错信息
-    // }
   })
 }
+
+
+
+// function login(){
+//   form.validate((isValid,errors)=>{
+//     if(isValid){
+//       //todo 发送登录请求
+//       loginApi.login(userInfo).then(res=>{
+//         //登录成功
+//         ElMessage.success('登录成功')
+//         console.log(res.data);
+//         // loginStore.setLoginStatus(res.data)
+//       //  跳转到Home
+//         router.push({name:'Home'})
+//       }).catch(err=>{
+//         //  否则  登录不成功   data是Promise.reject(data)
+//         console.log(err)
+//         let msg = err
+//         if (err.msg){
+//           msg= err.msg
+//           console.log(err);
+//         }
+//         ElMessage.error({
+//           message:msg,
+//           group:true
+//         })
+//       })
+//     }
+//     // else{
+//     //   // console.log(errors)  errors=>验证规则报错信息
+//     // }
+//   })
+// }
+
+
 function  getCode(){
   codeBtnInfo.loading=true;
   codeBtnInfo.text="正在获取验证码"
