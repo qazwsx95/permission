@@ -64,7 +64,6 @@ export function get(url ,params) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export function post(url,data){
-    console.log(url)
     // `data` 是作为请求体被发送的数据
     return instance.post(url,data)
 }
