@@ -2,9 +2,9 @@
 import {defineStore} from "pinia";
 // 存储信息 定义需要保存的信息
 const state = {
-    token:'',
-    permission:[],
-    roles:[],
+    token: '',
+    permission: [],
+    roles: [],
 }
 
 export default defineStore('login',{
@@ -12,12 +12,19 @@ export default defineStore('login',{
     state:()=>state,
     //setter actions是一个对象
     actions:{
+        //注销  登录不应携带token等
+        logout(){
+            this.token='';
+            this.permission=[];
+            this.roles=[];
+        },
         //定义一个函数设置登录状态
         //data:{需要的数据}
         setLoginStatus(data){
-            //这里this指向 定义的state
+            console.log(this)
+            //这里this指向loginStore
             this.token = data.token
-            this.permission = data.permission
+            this.permission = data.permissions
             this.roles = data.roles
         }
     },

@@ -1,28 +1,27 @@
 <template>
   <div class="account">
     <div class="search">
-      <el-form inline type="'small'">
+      <el-form inline >
         <el-form-item label="用户名">
           <el-input v-model="search.username" placeholder="请输入用户名" clearable></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="search.status" clearable placeholder="请选择状态">
-            <el-option label="启用" :value="1"></el-option>
-            <el-option label="禁用" :value="0"></el-option>
+            <el-option label="启用" :value="0"></el-option>
+            <el-option label="禁用" :value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="注册时间">
           <el-date-picker
             v-model="search.createTime"
-            type="datetimerange"
+            type="daterange"
             start-placeholder="开始日期"
             range-separator="至"
             end-placeholder="结束日期"
-            clearable>
+            clearable
+          value-format="YYYY-MM-DD"
+          format="YYYY-MM-DD">
           </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="loadData" :icon="Search">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -79,8 +78,8 @@
     </div>
     <el-dialog draggable :title="`${updateAccount.type}账号信息`" v-model="updateAccount.show">
 <!--      <Update v-model="updateAccount" />-->
-      <Update v-if="updateAccount.type==='修改'" :account="updateAccount.data" @close="updateAccount.show=false" />
-      <Insert v-if="updateAccount.type==='新增'" :account="updateAccount.data" @close="updateAccount.show=false" />
+      <Update v-if="updateAccount.type==='修改'" :account="updateAccount.data" @close="updateAccount.show=false;loadData()" />
+      <Insert v-if="updateAccount.type==='新增'" :account="updateAccount.data" @close="updateAccount.show=false;loadData()" />
     </el-dialog>
   </div>
 </template>
@@ -89,7 +88,7 @@
 import Update from '@views/account/Update.vue'
 import * as accountApi from '@api/account.api.js'
 import {Search} from '@element-plus/icons-vue'
-import {ref, computed, reactive} from 'vue'
+import {ref, computed, reactive, watch} from 'vue'
 import {deleteByIds} from "@api/account.api.js";
 import Insert from '@views/account/Insert.vue'
 import {ElMessage} from "element-plus";
@@ -113,6 +112,8 @@ const updateAccount = ref({
   data:{}
 })
 const tableData = ref()
+//没有查询按钮，直接监听search变化
+watch(search,loadData,{deep:true})
 //加载数据
 function loadData(){
   //发送请求   两个对象合并成一个对象
@@ -121,13 +122,12 @@ function loadData(){
     ...search.value,
     ...page.value
   }).then(rs=>{
-    loading.value=false
     //data里面的list作为数据传过来
     accounts.value=rs.data.list
     accounts.value.map(account=>account.statusLoading=false)
     console.log(accounts.value)
     page.value = rs.data.pageInfo
-  })
+  }).finally(()=>loading.value=false)
 }
 function changeStatus(account){
   account.statusLoading=true

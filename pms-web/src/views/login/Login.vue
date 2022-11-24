@@ -63,13 +63,13 @@ const loginStore = useStore()
 function login(){
   form.validate((isValid,errors)=>{
     if(isValid){
+      //注销
+      loginStore.logout()
       //表单校验通过
       loginApi.login(userInfo).then(res=>{
         ElMessage.success('登录成功')
-        console.log(res.data);
         loginStore.setLoginStatus(res.data)
         router.push({name:'Home'})
-        console.log(import.meta.env.VITE_MOCK_ENABLE==='true');
 
       }).catch(data=>{
         console.log(data)

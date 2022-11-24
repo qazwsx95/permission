@@ -1,6 +1,8 @@
 import axios from "axios";
 //弹窗
 import {ElMessage} from "element-plus"
+import router from "@router/index.js"
+import useLogin from "@store/LoginStore.js"
 //方便在外面进行修改
 const baseURL = import.meta.env.VITE_BASE_URL
 //创建axios实例
@@ -12,7 +14,17 @@ const instance = axios.create({
 });
 //开始导出
 export default instance
-
+//请求拦截器，接受token
+instance.interceptors.request.use((request) => {
+    const loginStore = useLogin()
+    if (loginStore.isLogin()){
+        request.headers['hm-token']=loginStore.token
+    }
+    return request;
+},error => {
+    ElMessage.error("网络连接失败，请检查网络是否正常")
+    return  Promise.reject((error))
+})
 //响应拦截器
 instance.interceptors.response.use((response) => {
 //    response拦截器，请求完成时做的事情
@@ -34,6 +46,10 @@ instance.interceptors.response.use((response) => {
             //分组
             group: true
         })
+        if (error.response.data.code ===40000){
+            router.push({name:'Login'})
+        }
+
     }else {
     //    否则直接弹窗
         ElMessage.error({
